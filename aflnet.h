@@ -92,6 +92,7 @@ unsigned int* extract_response_codes_tftp(unsigned char* buf, unsigned int buf_s
 unsigned int* extract_response_codes_SNTP(unsigned char* buf, unsigned int buf_size, unsigned int* state_count_ref);
 unsigned int* extract_response_codes_NTP(unsigned char* buf, unsigned int buf_size, unsigned int* state_count_ref);
 unsigned int* extract_response_codes_SNMP(unsigned char* buf, unsigned int buf_size, unsigned int* state_count_ref);
+unsigned int* extract_response_codes_modbustcp(unsigned char* buf, unsigned int buf_size, unsigned int* state_count_ref);
 extern unsigned int* (*extract_response_codes)(unsigned char* buf, unsigned int buf_size, unsigned int* state_count_ref);
 
 region_t* extract_requests_smtp(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
@@ -111,13 +112,14 @@ region_t* extract_requests_dhcp(unsigned char* buf, unsigned int buf_size, unsig
 region_t* extract_requests_SNTP(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
 region_t* extract_requests_NTP(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
 region_t* extract_requests_SNMP(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
+region_t* extract_requests_modbustcp(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
 extern region_t* (*extract_requests)(unsigned char* buf, unsigned int buf_size, unsigned int* region_count_ref);
 
 // Network communication functions
 
 // Two wrappers for sending and receiving data over socket
-int net_send(int sockfd, struct timeval timeout, char *mem, unsigned int len);
-int net_recv(int sockfd, struct timeval timeout, int poll_w, char **response_buf, unsigned int *len);
+int net_send(int sockfd, struct timeval timeout, char *mem, unsigned int len, unsigned char *timed_out);
+int net_recv(int sockfd, struct timeval timeout, int poll_w, char **response_buf, unsigned int *len, unsigned char *timed_out);
 
 // kl_messages manipulating functions
 

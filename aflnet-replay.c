@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
   unsigned int *state_sequence;
   unsigned int socket_timeout = 1000;
   unsigned int poll_timeout = 1;
+  unsigned char timeout_flag = 0;
 
 
   if (argc < 4) {
@@ -127,11 +128,13 @@ else {fprintf(stderr, "[AFLNet-replay] Protocol %s has not been supported yet!\n
       buf = (char *)ck_alloc(size);
       fread(buf, size, 1, fp);
 
-      if (net_recv(sockfd, timeout, poll_timeout, &response_buf, &response_buf_size)) break;
-      n = net_send(sockfd, timeout, buf,size);
+      timeout_flag = 0;
+      if (net_recv(sockfd, timeout, poll_timeout, &response_buf, &response_buf_size, &timeout_flag) < 0) break;
+      timeout_flag = 0;
+      n = net_send(sockfd, timeout, buf,size, &timeout_flag);
       if (n != size) break;
-
-      if (net_recv(sockfd, timeout, poll_timeout, &response_buf, &response_buf_size)) break;
+      timeout_flag = 0;
+      if (net_recv(sockfd, timeout, poll_timeout, &response_buf, &response_buf_size, &timeout_flag) < 0) break;
     }
   }
 
