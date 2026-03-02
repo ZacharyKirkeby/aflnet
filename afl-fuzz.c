@@ -92,6 +92,15 @@
 #  define EXP_ST static
 #endif /* ^AFL_LIB */
 
+/* some envirnments it doesn't seem to recognize "TRUE"*/
+#ifndef TRUE
+  #define TRUE=1
+#endif
+
+#ifndef FALSE
+  #define FALSE=0
+#endif
+
 /* Lots of globals, but mostly for the status UI and other things where it
    really makes no sense to haul them around as function parameters. */
 
@@ -1101,6 +1110,7 @@ int send_over_network()
     timeout_flag = 0;
     n = net_send(sockfd, timeout, msgbuf, msglen, &timeout_flag);
     // allowing timeouts
+    ck_free(msgbuf)
     if ( n < 0 ) {
       goto HANDLE_RESPONSES;
     }
@@ -8962,7 +8972,7 @@ int main(int argc, char** argv) {
   gettimeofday(&tv, &tz);
   srandom(tv.tv_sec ^ tv.tv_usec ^ getpid());
 
-  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QN:D:W:w:e:P:KEq:s:RFc:l:b:h:")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:f:m:t:T:dnCB:S:M:x:QN:D:W:w:e:P:KEq:s:RFc:l:b:h:r:g:")) > 0) {
 
     switch (opt) {
 
@@ -9280,7 +9290,7 @@ int main(int argc, char** argv) {
 	      if (local_port < 1024 || local_port > 65535) FATAL("Invalid source port number");
         break;
 
-      case 'e': /* reset script, should only needed for net only */
+      case 'g': /* reset script, should only needed for net only */
         if (reset_script) FATAL("Multiple -e options not supported");
         reset_script = optarg;
         break;
@@ -9329,7 +9339,7 @@ int main(int argc, char** argv) {
     FATAL("Input and output directories can't be the same");
 
   if (reset_script) {
-    if(!net_only) FATAL("-e requires -r");
+    if(!net_only) FATAL("-g requires -r");
   }
 
   if (dumb_mode) {
